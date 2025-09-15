@@ -51,7 +51,8 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
         mediaPlayer = MediaPlayer(libVLC).apply {
             setVideoTrackEnabled(true)
             setVideoScale(MediaPlayer.ScaleType.SURFACE_BEST_FIT)
-            attachViews(holder, null, false, false)
+            // 使用正确的 attachViews 方法，可能需要 SurfaceView 而不是 SurfaceHolder
+            attachViews(surfaceView, null, false, false)
         }
 
         val media = Media(libVLC, android.net.Uri.parse(RTSP_URL)).apply {
@@ -82,7 +83,7 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
                     .url(AUTH_URL)
                     .build()
                 val response = httpClient.newCall(request).execute()
-                Log.d("Auth", "Response: ${response.code}")
+                Log.d("Auth", "Response: ${response.code()}")
                 response.close()
             } catch (e: Exception) {
                 Log.e("Auth", "Error: ${e.message}")
