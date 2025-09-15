@@ -9,9 +9,9 @@ android {
     signingConfigs {
         release {
             storeFile file("android.jks")
-            storePassword "123456"
+            storePassword "12345678"
             keyAlias "rstp"
-            keyPassword "123456"
+            keyPassword "12345678"
         }
     }
 
