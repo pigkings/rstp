@@ -5,9 +5,9 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
     <text
-        android:x="54"
-        android:y="60"
-        android:textSize="40"
+        android:x="54dp"
+        android:y="54dp"
+        android:textSize="40sp"
         android:textColor="#FF42A5F5"
         android:text="RSTP"
         android:textAlignment="center"
