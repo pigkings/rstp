@@ -3,6 +3,8 @@ name: Android CI
 on:
   push:
     branches: [ "master" ]
+    tags:
+      - "v*"
   pull_request:
     branches: [ "master" ]
 
@@ -10,7 +12,8 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 11
@@ -34,3 +37,10 @@ jobs:
       with:
         name: rtsp-viewer-apk
         path: app/build/outputs/apk/release
+
+    - name: Create Release and Upload Release Asset
+    - uses: ncipollo/release-action@v1
+      with:
+          artifacts: "*.apk"
+          token: ${{ github.token }}
+          generateReleaseNotes: true

@@ -55,15 +55,15 @@ class MainActivity : AppCompatActivity() {
             attachViews(videoLayout, null, false, false)
         }
 
+        // 立即开始拉流
         val media = Media(libVLC, android.net.Uri.parse(RTSP_URL)).apply {
             setHWDecoderEnabled(true, false)
             addOption(":network-caching=300")
         }
-
         mediaPlayer.media = media
         mediaPlayer.play()
 
-        // 开始定时授权
+        // 开始定时授权轮询（与拉流无关）
         startAuthPolling()
     }
 
