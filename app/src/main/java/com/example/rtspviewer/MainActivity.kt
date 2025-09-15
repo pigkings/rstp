@@ -29,29 +29,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         videoLayout = findViewById(R.id.videoLayout)
-        // VLCVideoLayout 可能不需要 SurfaceHolder 回调
-        // 直接使用 attachViews 方法
-
-        handler = Handler(Looper.getMainLooper())
-        httpClient = OkHttpClient.Builder()
-            .connectTimeout(5, TimeUnit.SECONDS)
-            .readTimeout(5, TimeUnit.SECONDS)
-            .build()
-
-        val options = ArrayList<String>().apply {
-            add("--aout=opensles")
-            add("--avcodec-codec=h264")
-            add("--file-logging")
-            add("--logfile=vlc-log.txt")
-        }
-        libVLC = LibVLC(this, options)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        videoLayout = findViewById(R.id.videoLayout)
 
         handler = Handler(Looper.getMainLooper())
         httpClient = OkHttpClient.Builder()
@@ -118,13 +95,6 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         mediaPlayer.stop()
         mediaPlayer.detachViews()
-        mediaPlayer.release()
-        libVLC.release()
-        handler.removeCallbacksAndMessages(null)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
         mediaPlayer.release()
         libVLC.release()
         handler.removeCallbacksAndMessages(null)
