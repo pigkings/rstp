@@ -38,9 +38,3 @@ jobs:
         name: rtsp-viewer-apk
         path: app/build/outputs/apk/release
 
-    - name: Create Release and Upload Release Asset
-      uses: ncipollo/release-action@v1
-      with:
-          artifacts: "*.apk"
-          token: ${{ github.token }}
-          generateReleaseNotes: true

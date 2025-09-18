@@ -55,22 +55,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeMediaPlayer() {
-        // 开始定时授权轮询（与拉流无关）
-        startAuthPolling()
+        // 先发送一次授权请求
+        sendAuthRequest()
+        
+        // 等待3秒后开始拉流
+        handler.postDelayed({
+            mediaPlayer = MediaPlayer(libVLC).apply {
+                setVideoTrackEnabled(true)
+                setVideoScale(MediaPlayer.ScaleType.SURFACE_BEST_FIT)
+                attachViews(videoLayout, null, false, false)
+            }
 
-        mediaPlayer = MediaPlayer(libVLC).apply {
-            setVideoTrackEnabled(true)
-            setVideoScale(MediaPlayer.ScaleType.SURFACE_BEST_FIT)
-            attachViews(videoLayout, null, false, false)
-        }
-
-        // 立即开始拉流
-        val media = Media(libVLC, android.net.Uri.parse(RTSP_URL)).apply {
-            setHWDecoderEnabled(true, false)
-            addOption(":network-caching=300")
-        }
-        mediaPlayer.media = media
-        mediaPlayer.play()      
+            val media = Media(libVLC, android.net.Uri.parse(RTSP_URL)).apply {
+                setHWDecoderEnabled(true, false)
+                addOption(":network-caching=300")
+            }
+            mediaPlayer.media = media
+            mediaPlayer.play()
+            
+            // 开始定时授权轮询
+            startAuthPolling()
+        }, 3000)
     }
 
     private fun startAuthPolling() {
