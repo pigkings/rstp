@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     private val RTSP_URL = "rtsp://192.168.0.1:554/livestream/12"
     private val AUTH_URL = "http://192.168.0.1/cgi-bin/client.cgi?&-operation=register&-ip=192.168.0.22"
-    private val AUTH_INTERVAL = 1000L // 1秒
+    private val AUTH_INTERVAL = 1000 // 1秒
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,27 +55,38 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeMediaPlayer() {
-        // 先发送一次授权请求
-        sendAuthRequest()
-        
-        // 等待3秒后开始拉流
-        handler.postDelayed({
-            mediaPlayer = MediaPlayer(libVLC).apply {
-                setVideoTrackEnabled(true)
-                setVideoScale(MediaPlayer.ScaleType.SURFACE_BEST_FIT)
-                attachViews(videoLayout, null, false, false)
-            }
+        // 发送授权请求并等待完成
+        Thread {
+            try {
+                val request = Request.Builder()
+                    .url(AUTH_URL)
+                    .build()
+                val response = httpClient.newCall(request).execute()
+                Log.d("Auth", "Initial auth response: ${response.code()}")
+                response.close()
+                
+                // 授权完成后在主线程开始拉流
+                handler.postDelayed({
+                    mediaPlayer = MediaPlayer(libVLC).apply {
+                        setVideoTrackEnabled(true)
+                        setVideoScale(MediaPlayer.ScaleType.SURFACE_BEST_FIT)
+                        attachViews(videoLayout, null, false, false)
+                    }
 
-            val media = Media(libVLC, android.net.Uri.parse(RTSP_URL)).apply {
-                setHWDecoderEnabled(true, false)
-                addOption(":network-caching=300")
+                    val media = Media(libVLC, android.net.Uri.parse(RTSP_URL)).apply {
+                        setHWDecoderEnabled(true, false)
+                        addOption(":network-caching=300")
+                    }
+                    mediaPlayer.media = media
+                    mediaPlayer.play()
+                    
+                    // 开始定时授权轮询
+                    startAuthPolling()
+                }, 3000)
+            } catch (e: Exception) {
+                Log.e("Auth", "Initial auth failed: ${e.message}")
             }
-            mediaPlayer.media = media
-            mediaPlayer.play()
-            
-            // 开始定时授权轮询
-            startAuthPolling()
-        }, 3000)
+        }.start()
     }
 
     private fun startAuthPolling() {
