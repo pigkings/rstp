@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
 
     private val RTSP_URL = "rtsp://192.168.0.1:554/livestream/12"
     private val AUTH_URL = "http://192.168.0.1/cgi-bin/client.cgi?&-operation=register&-ip=192.168.0.22"
-    private val AUTH_INTERVAL = 1000 // 1秒
+    private val AUTH_INTERVAL = 1000L // 1秒
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
