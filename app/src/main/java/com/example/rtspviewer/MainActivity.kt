@@ -26,6 +26,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // 设置全屏显示
+        window.decorView.systemUiVisibility = (
+            android.view.View.SYSTEM_UI_FLAG_FULLSCREEN
+            or android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            or android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+        )
         setContentView(R.layout.activity_main)
 
         videoLayout = findViewById(R.id.videoLayout)
@@ -49,6 +55,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initializeMediaPlayer() {
+        // 开始定时授权轮询（与拉流无关）
+        startAuthPolling()
+
         mediaPlayer = MediaPlayer(libVLC).apply {
             setVideoTrackEnabled(true)
             setVideoScale(MediaPlayer.ScaleType.SURFACE_BEST_FIT)
@@ -61,10 +70,7 @@ class MainActivity : AppCompatActivity() {
             addOption(":network-caching=300")
         }
         mediaPlayer.media = media
-        mediaPlayer.play()
-
-        // 开始定时授权轮询（与拉流无关）
-        startAuthPolling()
+        mediaPlayer.play()      
     }
 
     private fun startAuthPolling() {
