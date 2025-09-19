@@ -71,6 +71,7 @@ class MainActivity : AppCompatActivity() {
                         setVideoTrackEnabled(true)
                         setVideoScale(MediaPlayer.ScaleType.SURFACE_BEST_FIT)
                         attachViews(videoLayout, null, false, false)
+                        volume = 0 // 设置静音
                     }
 
                     val media = Media(libVLC, android.net.Uri.parse(RTSP_URL)).apply {
